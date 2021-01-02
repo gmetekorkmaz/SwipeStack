@@ -1,7 +1,7 @@
 import 'dart:math' as Math;
 import 'package:flutter/widgets.dart';
 
-enum SwiperPosition { None, Left, Right }
+enum SwiperPosition { None, Left, Right, Top }
 enum StackFrom { None, Top, Left, Right, Bottom }
 
 class SwiperItem {
@@ -105,10 +105,19 @@ class SwipeStackState extends State<SwipeStack>
         if (_animationType != 1 && _animationAngle != null)
           _angle = _animationAngle.value;
 
+        bool _isTop = false;
+        if (_top < -40 && _left > -15 && _left < 10) {
+          _isTop = true;
+        }
+
         _progress = (100 / _baseContainerConstraints.maxWidth) * _left.abs();
-        _currentItemPosition = (_left.toInt() == 0)
-            ? SwiperPosition.None
-            : (_left < 0) ? SwiperPosition.Left : SwiperPosition.Right;
+        _currentItemPosition = _isTop
+            ? SwiperPosition.Top
+            : (_left.toInt() == 0)
+                ? SwiperPosition.None
+                : (_left < 0)
+                    ? SwiperPosition.Left
+                    : SwiperPosition.Right;
 
         setState(() {});
       }
@@ -221,8 +230,12 @@ class SwipeStackState extends State<SwipeStack>
     if (widget.maxAngle > 0 &&
         _animationController.status != AnimationStatus.forward) {
       _angle = ((_maxAngle / 100) * _progress) * _centerSlow;
-      _angle =
-          _angle * ((_isTop && _isLeft) ? 1 : (!_isTop && !_isLeft) ? 1 : -1);
+      _angle = _angle *
+          ((_isTop && _isLeft)
+              ? 1
+              : (!_isTop && !_isLeft)
+                  ? 1
+                  : -1);
     }
 
     return Positioned(
@@ -250,20 +263,28 @@ class SwipeStackState extends State<SwipeStack>
             _left += dragUpdateDetails.delta.dx;
             _top += dragUpdateDetails.delta.dy;
 
+            bool _isTop = false;
+            if (_top < -40 && _left > -15 && _left < 10) {
+              _isTop = true;
+            }
             if (widget.onSwipeUpdate != null)
               widget.onSwipeUpdate(
                   index,
-                  (_left.toInt() == 0)
-                      ? SwiperPosition.None
-                      : (_left < 0)
-                          ? SwiperPosition.Left
-                          : SwiperPosition.Right);
+                  _isTop
+                      ? SwiperPosition.Top
+                      : (_left.toInt() == 0)
+                          ? SwiperPosition.None
+                          : (_left < 0)
+                              ? SwiperPosition.Left
+                              : SwiperPosition.Right);
 
             _progress =
                 (100 / _baseContainerConstraints.maxWidth) * _left.abs();
             _currentItemPosition = (_left.toInt() == 0)
                 ? SwiperPosition.None
-                : (_left < 0) ? SwiperPosition.Left : SwiperPosition.Right;
+                : (_left < 0)
+                    ? SwiperPosition.Left
+                    : SwiperPosition.Right;
             setState(() {});
           },
           onPanEnd: _onPandEnd),
