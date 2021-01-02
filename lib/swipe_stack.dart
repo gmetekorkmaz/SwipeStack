@@ -23,7 +23,7 @@ class SwipeStack extends StatefulWidget {
   final void Function(int, SwiperPosition) onSwipe;
   final void Function(int, SwiperPosition) onRewind;
   final void Function(int, SwiperPosition) onSwipeUpdate;
-  final void Function() onSwipeEnded;
+  final void Function(SwiperPosition) onSwipeEnded;
   final void Function() onEnd;
   final EdgeInsetsGeometry padding;
 
@@ -106,10 +106,9 @@ class SwipeStackState extends State<SwipeStack>
           _angle = _animationAngle.value;
 
         bool _isTop = false;
-        if (_top < -40 && _left > -15 && _left < 10) {
+        if (_top < -40 && _left > -30 && _left < 30) {
           _isTop = true;
         }
-
         _progress = (100 / _baseContainerConstraints.maxWidth) * _left.abs();
         _currentItemPosition = _isTop
             ? SwiperPosition.Top
@@ -264,7 +263,7 @@ class SwipeStackState extends State<SwipeStack>
             _top += dragUpdateDetails.delta.dy;
 
             bool _isTop = false;
-            if (_top < -40 && _left > -15 && _left < 10) {
+            if (_top < -40 && _left > -30 && _left < 30) {
               _isTop = true;
             }
             if (widget.onSwipeUpdate != null)
@@ -280,11 +279,13 @@ class SwipeStackState extends State<SwipeStack>
 
             _progress =
                 (100 / _baseContainerConstraints.maxWidth) * _left.abs();
-            _currentItemPosition = (_left.toInt() == 0)
-                ? SwiperPosition.None
-                : (_left < 0)
-                    ? SwiperPosition.Left
-                    : SwiperPosition.Right;
+            _currentItemPosition = _isTop
+                ? SwiperPosition.Top
+                : (_left.toInt() == 0)
+                    ? SwiperPosition.None
+                    : (_left < 0)
+                        ? SwiperPosition.Left
+                        : SwiperPosition.Right;
             setState(() {});
           },
           onPanEnd: _onPandEnd),
@@ -292,7 +293,7 @@ class SwipeStackState extends State<SwipeStack>
   }
 
   void _onPandEnd(_) {
-    if (widget.onSwipeEnded != null) widget.onSwipeEnded();
+    if (widget.onSwipeEnded != null) widget.onSwipeEnded(_currentItemPosition);
     setState(() {});
     if (_progress < widget.threshold) {
       _goFirstPosition();
