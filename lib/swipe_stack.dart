@@ -20,6 +20,7 @@ class SwipeStack extends StatefulWidget {
   final double scaleInterval;
   final Duration animationDuration;
   final int historyCount;
+  final void Function(int) onTap;
   final void Function(int, SwiperPosition) onSwipe;
   final void Function(int, SwiperPosition) onRewind;
   final void Function(int, SwiperPosition) onSwipeUpdate;
@@ -39,6 +40,7 @@ class SwipeStack extends StatefulWidget {
       this.animationDuration = const Duration(milliseconds: 200),
       this.historyCount = 1,
       this.onEnd,
+      this.onTap,
       this.onSwipeUpdate,
       this.onSwipeEnded,
       this.onSwipe,
@@ -248,6 +250,9 @@ class SwipeStackState extends State<SwipeStack>
                 child: widget.children[index]
                     .builder(_currentItemPosition, _progress)),
           ),
+          onTap: () {
+            widget.onTap?.call(index);
+          },
           onPanStart: (DragStartDetails dragStartDetails) {
             RenderBox getBox = context.findRenderObject();
             var local = getBox.globalToLocal(dragStartDetails.globalPosition);
