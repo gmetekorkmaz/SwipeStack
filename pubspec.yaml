@@ -2,10 +2,10 @@ name: swipe_stack
 description: Flutter swipe stack widget.
 version: 1.0.0
 author: G.Mete Korkmaz <g.metekorkmaz@gmail.com>
-homepage: https://github.com/gmetekorkmaz/SwipeStack
+homepage: https://github.com/jacksonw765/SwipeStack
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
